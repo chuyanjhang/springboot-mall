@@ -14,6 +14,7 @@ public class Product {
     private Integer stock;
     private String description;
     private Date createTime;
+    private Date lastModifiledDate;
 
     public Date getCreateTime() {
         return createTime;
@@ -22,8 +23,6 @@ public class Product {
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
-
-    private Date lastModifiledDate;
 
     public Integer getProductId() {
         return productId;
