@@ -1,5 +1,6 @@
 package com.max.springbootmall.rowmapper;
 
+import com.max.springbootmall.constant.ProductCategory;
 import com.max.springbootmall.model.Product;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -12,9 +13,12 @@ public class ProductRowMapper implements RowMapper<Product> {
     public Product mapRow(ResultSet resultSet, int i) throws SQLException {
         Product product = new Product();
 
+        String categoryStr = resultSet.getString("category");
+        ProductCategory category = ProductCategory.valueOf(categoryStr);
+
         product.setProductId(resultSet.getInt("product_id"));
         product.setProductName(resultSet.getString("product_name"));
-        product.setCategory(resultSet.getString("category"));
+        product.setCategory(category);
         product.setImgUrl(resultSet.getString("image_url"));
         product.setPrice(resultSet.getInt("price"));
         product.setStock(resultSet.getInt("stock"));
