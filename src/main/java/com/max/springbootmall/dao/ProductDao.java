@@ -1,6 +1,7 @@
 package com.max.springbootmall.dao;
 
 import com.max.springbootmall.constant.ProductCategory;
+import com.max.springbootmall.dto.ProductQueryParams;
 import com.max.springbootmall.dto.ProductRequest;
 import com.max.springbootmall.model.Product;
 
@@ -8,7 +9,9 @@ import java.util.List;
 
 public interface ProductDao {
 
-    List<Product> getProducts(ProductCategory category,String serch);
+    Integer countProduct(ProductQueryParams productQueryParams);
+
+    List<Product> getProducts(ProductQueryParams productQueryParams);
 
     Product getProductById(Integer productId);
 

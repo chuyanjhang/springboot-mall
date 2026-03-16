@@ -3,6 +3,7 @@ package com.max.springbootmall.dao.impl;
 
 import com.max.springbootmall.constant.ProductCategory;
 import com.max.springbootmall.dao.ProductDao;
+import com.max.springbootmall.dto.ProductQueryParams;
 import com.max.springbootmall.dto.ProductRequest;
 import com.max.springbootmall.model.Product;
 import com.max.springbootmall.rowmapper.ProductRowMapper;
@@ -26,22 +27,37 @@ public class ProductDaoImpl implements ProductDao {
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
-    public List<Product> getProducts(ProductCategory category,String serch) {
+    public Integer countProduct(ProductQueryParams productQueryParams) {
+        String sql = "select count(*) from product where 1=1";
+
+        Map<String, Object> map = new HashMap<>();
+
+        //查詢條件
+        sql = addFilteringSql(sql,map,productQueryParams);
+
+        Integer total = namedParameterJdbcTemplate.queryForObject(sql, map, Integer.class);
+
+        return total;
+    }
+
+    @Override
+    public List<Product> getProducts(ProductQueryParams productQueryParams) {
 
         String sql = "select product_id,product_name, category, image_url, price, stock, description, created_date," +
                 "last_modified_date from product WHERE 1=1";
 
         Map<String, Object> map = new HashMap<>();
+        //查詢條件
+        sql = addFilteringSql(sql,map,productQueryParams);
 
-        if(category!=null){
-            sql = sql + " AND category = :category";
-            map.put("category",category.name());
-        }
+        //排序
+        sql = sql + " ORDER BY " + productQueryParams.getOrderBy() + " " + productQueryParams.getSort();
 
-        if(serch!=null){
-            sql = sql + " AND product_name LIKE :serch";
-            map.put("serch","%"+serch+"%");
-        }
+        //分頁
+        sql = sql + " LIMIT :limit OFFSET :offset";
+        map.put("limit",productQueryParams.getLimit());
+        map.put("offset",productQueryParams.getOffset());
+
         List<Product> products = namedParameterJdbcTemplate.query(sql, map, new ProductRowMapper());
 
         return products;
@@ -117,5 +133,20 @@ public class ProductDaoImpl implements ProductDao {
         Map<String,Object> map = new HashMap<>();
         map.put("productId", productId);
         namedParameterJdbcTemplate.update(sql,map);
+    }
+
+    private String addFilteringSql(String sql,Map<String,Object> map,ProductQueryParams productQueryParams){
+        //查詢條件
+        if(productQueryParams.getCategory()!=null){
+            sql = sql + " AND category = :category";
+            map.put("category",productQueryParams.getCategory().name());
+        }
+
+        if(productQueryParams.getSearch()!=null){
+            sql = sql + " AND product_name LIKE :search";
+            map.put("search","%"+productQueryParams.getSearch()+"%");
+        }
+
+        return sql;
     }
 }
