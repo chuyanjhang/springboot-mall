@@ -1,5 +1,6 @@
 package com.max.springbootmall.service.impl;
 
+import com.max.springbootmall.constant.ProductCategory;
 import com.max.springbootmall.dao.ProductDao;
 import com.max.springbootmall.dto.ProductRequest;
 import com.max.springbootmall.model.Product;
@@ -7,11 +8,18 @@ import com.max.springbootmall.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductDao productDao;
+
+    @Override
+    public List<Product> getProducts(ProductCategory category,String serch) {
+        return productDao.getProducts(category,serch);
+    }
 
     @Override
     public Product getProductById(Integer productId) {
